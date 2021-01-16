@@ -65,11 +65,13 @@ void display(char **file_names, int name_amnt, char *flags){
         }
     }
 }
-void display_file(char **file_names, int name_amnt, char *flags){
-    for(int i = 0; ; ++i){
-        if(flags[i] == 'l'){
-            File_i **out = (File_i **) malloc(sizeof(File_i *));
-            out[0] = (File_i *) malloc(sizeof(File_i));
+void display_file(char **file_names, int id, char *flags){
+    if(flags[0] == 'l'){
+        File_i **out = (File_i **) malloc(sizeof(File_i *) * id);
+        for(int i = 0; i < id; ++i){
+            out[i] = (File_i *) malloc(sizeof(File_i));
+        }   
+        for(int i = 0; i < id; ++i){
             struct stat buf;
             if(lstat(file_names[i], &buf) == -1){
                 mx_printerr("stat error\n");
@@ -103,15 +105,16 @@ void display_file(char **file_names, int name_amnt, char *flags){
             else {
                 out[i]->file_name = mx_strdup(file_names[i]);
             }
-            print_file_names_l_flag(out, 1);
-            break;
         }
-        else if(flags[i] != '\0'){
-            print_file_names(file_names, name_amnt);
+        print_file_names_l_flag(out, id);
+    }
+    else {
+        for(int i = 0; i < id ; ++i){
+            for(int j = 0; file_names[i][j] != '\0'; ++j) mx_printchar(file_names[i][j]);
             mx_printchar('\n');
-            break;
         }
     }
+    
 }
 
 void uls(char *path, char *flags){

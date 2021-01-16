@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
             }   
 		}
 	}
-
+    int files_amnt = 0;
     for(int i = 0; path[i] != NULL; i++) {    
         struct stat buf;
         
@@ -104,7 +104,13 @@ int main(int argc, char **argv) {
             }
         }
         else {
-            display_file(path, i, flags);
+            files_amnt++;
+            struct stat temp1;
+            stat(path[i+1], &temp1);
+            if(i < argc - flag_amnt - 1 && (S_ISDIR(temp1.st_mode) || path[i+1] == NULL)){
+                display_file(path, files_amnt, flags);
+                if (S_ISDIR(temp1.st_mode)) mx_printchar('\n');
+            }
         }
     }
     if(error) exit(1); 
