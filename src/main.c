@@ -89,6 +89,7 @@ int main(int argc, char **argv) {
             mx_printerr("uls: ");
             mx_printerr(path[i]);
             mx_printerr(": No such file or directory\n");
+            error = true;
             continue;
         }
         
