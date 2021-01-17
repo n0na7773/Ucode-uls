@@ -20,16 +20,18 @@ int main(int argc, char **argv) {
     int flag_amnt = 0;
     int index = 0;
 
-    if(argv[1][0] == '-'){
-        for(int j = 1; j < mx_strlen(argv[1]); ++j){
-            if (flags[j] != flags[j-1] || index == 0) flags[index] = argv[1][j];
-            index++;    
+    if (argc >=2) {
+        if(argv[1][0] == '-' ){
+            for(int j = 1; j < mx_strlen(argv[1]); ++j){
+                if (flags[j] != flags[j-1] || index == 0) flags[index] = argv[1][j];
+                index++;    
+            }
+            if (mx_strlen(flags) != 0) flag_amnt++;
         }
-        flag_amnt++;
+        flags[index] = '\0';
+        check_flags(flags);
     }
-    flags[index] = '\0';
-    check_flags(flags);
-    
+
     char **path = (char **)malloc((argc + 1) * sizeof(char *));
 
     for (int i = 0; i < argc + 1; i++){
@@ -38,7 +40,7 @@ int main(int argc, char **argv) {
     if(argc == 1) {
         path[0] = mx_strdup("./");
     }
-    if(argc == 2) {
+    else if(argc == 2) {
         if(flag_amnt == 1) {
             path[0] = mx_strdup("./");
         }
@@ -46,7 +48,7 @@ int main(int argc, char **argv) {
             path[0] = mx_strdup(argv[1]);
         }
     }
-    if(argc > 2) {
+    else if(argc > 2) {
         int j = 0;
         int i = 0;
         if (flag_amnt == 1) i = 2;

@@ -25,7 +25,7 @@ void display(char **file_names, int name_amnt, char *flags){
                 out[k]->nlink = mx_itoa(buf.st_nlink);
                 out[k]->user = mx_user(&buf);
                 out[k]->group = mx_group(&buf);
-                out[k]->size = mx_itoa(buf.st_size); 
+                out[k]->size = mx_strdup(mx_itoa(buf.st_size)); 
 
                 if (S_ISLNK(buf.st_mode)) {
                     char link_buf[1024];
@@ -83,7 +83,7 @@ void display_file(char **file_names, int id, char *flags){
             out[i]->nlink = mx_itoa(buf.st_nlink);
             out[i]->user = mx_user(&buf);
             out[i]->group = mx_group(&buf);
-            out[i]->size = mx_itoa(buf.st_size);
+            out[i]->size = mx_strdup(mx_itoa(buf.st_size));
             
             if (S_ISLNK(buf.st_mode)) {
                 char link_buf[1024];
@@ -197,10 +197,12 @@ void uls(char *path, char *flags){
             }
             total += buf.st_blocks;
         }
-        mx_printstr("total ");
-        mx_printstr(mx_itoa(total));
-        mx_printchar('\n');
+        if (x != 0) {
+            mx_printstr("total ");
+            mx_printstr(mx_itoa(total));
+            mx_printchar('\n');
+        }
         total = 0;
     }
-    display(file_names, x, flags);
+    if (x != 0) display(file_names, x, flags);
 }
