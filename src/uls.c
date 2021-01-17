@@ -131,8 +131,8 @@ void uls(char *path, char *flags){
     }
     unsigned long max_name_len = 0;
     while((dptr = readdir(dir)) != NULL){
-        if(max_name_len < strlen(dptr->d_name))
-            max_name_len = strlen(dptr->d_name);
+        if(max_name_len < mx_strlen(dptr->d_name))
+            max_name_len = mx_strlen(dptr->d_name);
         name_amnt++;
     }
     if(closedir(dir) == -1) {
