@@ -19,14 +19,13 @@ int main(int argc, char **argv) {
     char *flags = (char *)malloc((argc - 1) * sizeof(char));
     int flag_amnt = 0;
     int index = 0;
-    for(int i = 1; i < argc; ++i){
-        if(argv[i][0] == '-'){
-            for(int j = 1; j < mx_strlen(argv[i]); ++j){
-                flags[index] = argv[i][j];
-                index++;    
-            }
-            flag_amnt++;
+
+    if(argv[1][0] == '-'){
+        for(int j = 1; j < mx_strlen(argv[1]); ++j){
+            if (flags[j] != flags[j-1] || index == 0) flags[index] = argv[1][j];
+            index++;    
         }
+        flag_amnt++;
     }
     flags[index] = '\0';
     check_flags(flags);
@@ -40,7 +39,7 @@ int main(int argc, char **argv) {
         path[0] = mx_strdup("./");
     }
     if(argc == 2) {
-        if(mx_strcmp(argv[1], "-l") == 0) {
+        if(flag_amnt == 1) {
             path[0] = mx_strdup("./");
         }
         else {
@@ -50,14 +49,14 @@ int main(int argc, char **argv) {
     if(argc > 2) {
         int j = 0;
         int i = 0;
-        if (mx_strcmp(argv[1], "-l") == 0) i = 2;
+        if (flag_amnt == 1) i = 2;
         else i = 1;
         for(; i < argc; i++) {
             path[j] = mx_strdup(argv[i]);
             j++;
         }
     }
-
+    //Total sort
     for (int i = 0;path[i] != NULL; i++) {
 		for (int j = 0;path[j] != NULL; j++) {
 			if (mx_strcmp(path[i], path[j]) < 0) {
@@ -66,6 +65,18 @@ int main(int argc, char **argv) {
 				path[j] = tmp;
 			}
 		}
+	}
+    //Error output
+    int errors_amnt = 0;
+    for (int i = 0;path[i] != NULL; i++) {
+        struct stat buf;
+        if(stat(path[i], &buf) == -1){
+            mx_printerr("uls: ");
+            mx_printerr(path[i]);
+            mx_printerr(": No such file or directory\n");
+            error = true;
+            errors_amnt++;
+        }
 	}
 
     for (int i = 0; path[i] != NULL; i++) {
@@ -81,15 +92,26 @@ int main(int argc, char **argv) {
             }   
 		}
 	}
+    
+    //Move error to the end
+    for (int i = 0; path[i] != NULL; i++) {
+		for (int j = 0; path[j+1] != NULL; j++) {
+            struct stat temp;
+            if(stat(path[j], &temp) == -1) {  
+                void *tmp = path[j];
+				path[j] = path[j+1];
+				path[j+1] = tmp;
+            }   
+		}
+	}
+
+    
     int files_amnt = 0;
+    
     for(int i = 0; path[i] != NULL; i++) {    
         struct stat buf;
         
         if(stat(path[i], &buf) == -1){
-            mx_printerr("uls: ");
-            mx_printerr(path[i]);
-            mx_printerr(": No such file or directory\n");
-            error = true;
             continue;
         }
         
@@ -99,7 +121,7 @@ int main(int argc, char **argv) {
                 mx_printstr(":\n");
             }
             uls(path[i], flags);
-            if(i < argc - flag_amnt - 2){
+            if(i < argc - flag_amnt - errors_amnt - 2){
                 mx_printchar('\n');
             }
         }

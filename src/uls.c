@@ -129,10 +129,7 @@ void uls(char *path, char *flags){
         mx_printerr(": No such file or directory\n");
         exit(1);
     }
-    unsigned long max_name_len = 0;
     while((dptr = readdir(dir)) != NULL){
-        if(max_name_len < mx_strlen(dptr->d_name))
-            max_name_len = mx_strlen(dptr->d_name);
         name_amnt++;
     }
     if(closedir(dir) == -1) {
